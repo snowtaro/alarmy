@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
         uniqueConstraints = {
                 @UniqueConstraint(
                         name = "uk_user_announcement_snapshot",
-                        columnNames = {"user_id", "announcement_id", "snapshot_id"}
+                        columnNames = {"member_id", "announcement_id", "snapshot_id"} // user_id -> member_id
                 )
         }
 )
@@ -25,33 +25,30 @@ public class NotificationHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @Column(name = "member_id", nullable = false) // SQL 기준 수정
+    private Long memberId;
 
     @Column(name = "announcement_id", nullable = false)
     private Long announcementId;
 
     @Column(name = "snapshot_id")
-    private Long snapshotId; // 변경 감지 알림일 경우 스냅샷 ID 포함
+    private Long snapshotId;
 
     @Enumerated(EnumType.STRING)
-    private NotificationStatus status; // SUCCESS, FAILED
+    private NotificationStatus status;
 
-    private String message; // 발송된 알림 메시지 요약
+    @Column(name = "error_message", columnDefinition = "TEXT") // message -> error_message
+    private String errorMessage;
 
+    @Column(name = "sent_at", insertable = false, updatable = false) // SQL default CURRENT_TIMESTAMP 반영
     private LocalDateTime sentAt;
 
     @Builder
-    public NotificationHistory(Long userId, Long announcementId, Long snapshotId, NotificationStatus status, String message) {
-        this.userId = userId;
+    public NotificationHistory(Long memberId, Long announcementId, Long snapshotId, NotificationStatus status, String errorMessage) {
+        this.memberId = memberId;
         this.announcementId = announcementId;
         this.snapshotId = snapshotId;
         this.status = status;
-        this.message = message;
-        this.sentAt = LocalDateTime.now();
-    }
-
-    public enum NotificationStatus {
-        SUCCESS, FAILED
+        this.errorMessage = errorMessage;
     }
 }

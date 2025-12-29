@@ -15,7 +15,8 @@ import java.util.List;
         name = "announcements",
         indexes = {
                 @Index(name = "idx_modified_at", columnList = "modified_at"),
-                @Index(name = "idx_deadline_at", columnList = "deadline_at")
+                @Index(name = "idx_deadline_at", columnList = "deadline_at"),
+                @Index(name = "idx_posted_at", columnList = "posted_at") // 추가된 인덱스
         }
 )
 @Getter

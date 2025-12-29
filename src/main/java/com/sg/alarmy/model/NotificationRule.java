@@ -20,31 +20,26 @@ public class NotificationRule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    // SQL 스키마의 member_id와 일치하도록 수정
+    @Column(name = "member_id", nullable = false)
+    private Long memberId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "rule_type", nullable = false, length = 20)
-    private RuleType ruleType; // IMMEDIATE, BEFORE_3_DAYS, ON_CHANGE
+    private RuleType ruleType;
 
-    // MySQL JSON 컬럼 매핑
     @Convert(converter = StringListConverter.class)
     @Column(name = "keywords", columnDefinition = "json")
     private List<String> keywords = new ArrayList<>();
 
     @Column(name = "is_active", nullable = false)
-    private boolean active = true; // 필드명은 active로 두는 게 덜 헷갈림
+    private boolean active = true;
 
     @Column(name = "last_triggered_at")
     private LocalDateTime lastTriggeredAt;
 
-    // DB default 값 사용
     @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;
-
-    public enum RuleType {
-        IMMEDIATE, BEFORE_3_DAYS, ON_CHANGE
-    }
 
     public void deactivate() {
         this.active = false;

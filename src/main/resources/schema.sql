@@ -13,7 +13,7 @@ CREATE TABLE members (
 CREATE TABLE authorities (
                              id BIGINT AUTO_INCREMENT PRIMARY KEY,
                              member_id BIGINT NOT NULL,
-                             authority_name VARCHAR(50) NOT NULL, -- 'ROLE_USER', 'ROLE_ADMIN'
+                             authority_name ENUM('ROLE_USER', 'ROLE_ADMIN') NOT NULL,
                              FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE,
                              UNIQUE KEY (member_id, authority_name) -- 한 유저가 동일 권한 중복 방지
 );

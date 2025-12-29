@@ -1,12 +1,21 @@
 -- 공고 테이블
 CREATE TABLE announcements (
-                               id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                               external_id VARCHAR(100) UNIQUE NOT NULL, -- 크롤링 원본 ID
-                               title VARCHAR(255) NOT NULL,
-                               category VARCHAR(50),
-                               deadline_at DATETIME,
-                               view_count INT DEFAULT 0,
-                               created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                        external_id VARCHAR(100) UNIQUE NOT NULL, -- 크롤링 원본 ID
+
+                                        url VARCHAR(500) NOT NULL,
+                                        title VARCHAR(255) NOT NULL,
+                                        category VARCHAR(50),
+
+                                        posted_at DATETIME NULL,
+                                        modified_at DATETIME NULL,
+                                        deadline_at DATETIME NULL,
+
+                                        view_count INT DEFAULT 0,
+                                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+                                        KEY idx_modified_at (modified_at),
+                                        KEY idx_deadline_at (deadline_at)
 );
 
 -- 공고 스냅샷 (버전 관리 및 Diff용)

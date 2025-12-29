@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Alarmy 로그인</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f2f5; }
+        .login-container { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 350px; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <h2>Alarmy Login</h2>
+    <input type="email" id="email" placeholder="이메일(ID)" required>
+    <input type="password" id="password" placeholder="비밀번호" required>
+    <button onclick="handleLogin()">로그인</button>
+    <p id="message" style="color: red; font-size: 0.9rem;"></p>
+</div>
+
+<script>
+    async function handleLogin() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+
+                // 데이터 확인을 위해 콘솔에 찍어보세요 (F12 콘솔 탭에서 확인 가능)
+                console.log("서버 응답 데이터:", data);
+
+                // 1. 토큰 저장
+                localStorage.setItem('accessToken', data.token);
+                // 2. 닉네임 저장 (이 부분이 누락되었을 가능성이 큽니다)
+                localStorage.setItem('nickname', data.nickname);
+
+                alert(data.nickname + '님 환영합니다!');
+                window.location.href = '/main';
+            } else {
+                alert('로그인 실패');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+</script>
+</body>
+</html>

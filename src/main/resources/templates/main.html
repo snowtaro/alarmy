@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Alarmy 공고 목록</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+<nav class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16 items-center">
+            <div class="flex items-center">
+                <span class="text-2xl font-extrabold text-blue-600 tracking-tight">Alarmy</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span id="user-nickname" class="text-gray-700 font-medium"></span>
+                <button onclick="logout()" class="text-sm text-red-500 hover:text-red-700 font-semibold">로그아웃</button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+    <div class="md:flex md:items-center md:justify-between mb-8">
+        <div class="flex-1 min-w-0">
+            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+                실시간 채용 공고
+            </h2>
+            <p class="mt-1 text-sm text-gray-500">최신 업데이트된 공고를 확인하고 알림을 설정하세요.</p>
+        </div>
+    </div>
+
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg border border-gray-200">
+        <div id="loading" class="flex flex-col items-center py-20">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+            <p class="text-gray-500">데이터를 불러오는 중입니다...</p>
+        </div>
+
+        <table class="min-w-full divide-y divide-gray-200 hidden" id="announcement-table">
+            <thead class="bg-gray-50">
+            <tr>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">카테고리</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">공고 제목</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">마감일</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">조회수</th>
+                <th scope="col" class="relative px-6 py-3"><span class="sr-only">이동</span></th>
+            </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200" id="list-body">
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<script>
+    // 페이지 로드 시 닉네임 표시
+    document.getElementById('user-nickname').innerText = localStorage.getItem('nickname') + ' 님';
+
+    async function fetchAnnouncements() {
+        const token = localStorage.getItem('accessToken');
+        if (!token) {
+            window.location.href = '/login';
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/announcements', {
+                headers: { 'Authorization': 'Bearer ' + token }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                renderList(data);
+            } else {
+                handleAuthError();
+            }
+        } catch (error) {
+            console.error('Fetch error:', error);
+        }
+    }
+
+    function renderList(data) {
+        const tbody = document.getElementById('list-body');
+        const loading = document.getElementById('loading');
+        const table = document.getElementById('announcement-table');
+
+        data.forEach(item => {
+            const deadline = item.deadlineAt ? new Date(item.deadlineAt).toLocaleDateString() : '상시채용';
+
+            const row = `
+                    <tr class="hover:bg-blue-50 transition-colors duration-150">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                ${item.category}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="text-sm font-semibold text-gray-900">${item.title}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <i class="far fa-calendar-alt mr-1"></i> ${deadline}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                            ${item.viewCount.toLocaleString()}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <a href="${item.url}" target="_blank" class="text-blue-600 hover:text-blue-900">상세보기 <i class="fas fa-chevron-right ml-1"></i></a>
+                        </td>
+                    </tr>
+                `;
+            tbody.innerHTML += row;
+        });
+
+        loading.classList.add('hidden');
+        table.classList.remove('hidden');
+    }
+
+    function logout() {
+        localStorage.clear();
+        window.location.href = '/login';
+    }
+
+    function handleAuthError() {
+        localStorage.clear();
+        alert('세션이 만료되었습니다. 다시 로그인해주세요.');
+        window.location.href = '/login';
+    }
+
+    window.onload = fetchAnnouncements;
+</script>
+</body>
+</html>

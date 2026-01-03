@@ -20,9 +20,8 @@ public class NotificationRule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // SQL 스키마의 member_id와 일치하도록 수정
-    @Column(name = "member_id", nullable = false)
-    private Long memberId;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "rule_type", nullable = false, length = 20)

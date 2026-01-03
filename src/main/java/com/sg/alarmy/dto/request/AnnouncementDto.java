@@ -1,4 +1,4 @@
-package com.sg.alarmy.dto;
+package com.sg.alarmy.dto.request;
 
 import com.sg.alarmy.model.Announcement;
 import lombok.Getter;

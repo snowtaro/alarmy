@@ -25,8 +25,8 @@ public class NotificationHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "member_id", nullable = false) // SQL 기준 수정
-    private Long memberId;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
     @Column(name = "announcement_id", nullable = false)
     private Long announcementId;
@@ -44,8 +44,8 @@ public class NotificationHistory {
     private LocalDateTime sentAt;
 
     @Builder
-    public NotificationHistory(Long memberId, Long announcementId, Long snapshotId, NotificationStatus status, String errorMessage) {
-        this.memberId = memberId;
+    public NotificationHistory(Long userId, Long announcementId, Long snapshotId, NotificationStatus status, String errorMessage) {
+        this.userId = userId;
         this.announcementId = announcementId;
         this.snapshotId = snapshotId;
         this.status = status;

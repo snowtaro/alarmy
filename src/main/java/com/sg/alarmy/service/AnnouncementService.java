@@ -1,6 +1,6 @@
 package com.sg.alarmy.service;
 
-import com.sg.alarmy.dto.AnnouncementDto;
+import com.sg.alarmy.dto.request.AnnouncementDto;
 import com.sg.alarmy.repository.AnnouncementRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

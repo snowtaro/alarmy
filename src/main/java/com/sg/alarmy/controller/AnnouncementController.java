@@ -1,6 +1,6 @@
 package com.sg.alarmy.controller;
 
-import com.sg.alarmy.dto.AnnouncementDto;
+import com.sg.alarmy.dto.request.AnnouncementDto;
 import com.sg.alarmy.service.AnnouncementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
